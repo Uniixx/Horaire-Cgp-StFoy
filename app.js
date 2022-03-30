@@ -16,7 +16,6 @@ client.config = {
     "prefix": prefix
 }
 
-
 const events = fs.readdirSync('./src/events').filter(file => file.endsWith('.js'));
 
 for (const file of events) {
