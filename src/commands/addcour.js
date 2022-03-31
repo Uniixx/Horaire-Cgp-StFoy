@@ -1,4 +1,3 @@
-const cours = require("../../cours.json");
 const moment = require('moment');
 require('moment/locale/fr.js');
 moment.locale('fr');

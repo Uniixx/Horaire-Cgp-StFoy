@@ -1,4 +1,3 @@
-const cours = require("../../cours.json");
 const moment = require('moment');
 
 exports.run = (client, message, args) => {
