@@ -1,0 +1,5 @@
+{
+    "NotFoundHoraire": "No schedule has been found for the %day% (could be an error make sure to check Omnivox!)",
+    "NotFoundClasses": "No classes has been found for the %day% (could be an error make sure to check Omnivox!)",
+    "NoWeekend": "I doubt there will be a class given on the weekend!"
+}

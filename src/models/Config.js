@@ -3,17 +3,17 @@ const { DataTypes, Model } = require('sequelize');
 module.exports = class config extends Model {
     static init(sequelize) {
         return super.init({
-            horaireID: {
+            configId: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true
             },
             guildId: { type: DataTypes.STRING },
-            day: { type: DataTypes.INTEGER },
-            month: { type: DataTypes.INTEGER },
-            year: { type: DataTypes.INTEGER }
+            prefix: { type: DataTypes.STRING },
+            welcomechannel: { type: DataTypes.STRING },
+            logchannel: { type: DataTypes.STRING },
         }, {
-            tableName: 'horaire',
+            tableName: 'config',
             timestamps: false,
             sequelize
         });

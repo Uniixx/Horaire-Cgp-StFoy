@@ -1,39 +1,93 @@
+const fs = require('fs');
+const path = require('path');
 const { Client, Intents, Collection } = require('discord.js');
-
 require('dotenv').config();
 
-const fs = require('fs');
+const db = require('./src/database/db');
+const Config = require('./src/models/Config');
+const Horaire = require('./src/models/Horaire');
+const Class = require('./src/models/Class');
 
 const token = process.env._TOKEN;
 
-const prefix = process.env._PREFIX;
+process.on('uncaughtException', err => {
+    console.log('UNCAUGHT EXCEPTION:\n');
+    console.log(err);
+});
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+});
 
 client.commands = new Collection();
+const commandsPath = path.join(__dirname, 'src', 'commands');
+console.log(commandsPath);
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+const commands = [];
 
-client.config = {
-    "prefix": prefix
+for (const file of commandFiles) {
+    const command = require(path.join(commandsPath, file));
+    client.commands.set(command.data.name, command);
+    commands.push(command.data.toJSON());
 }
 
-const events = fs.readdirSync('./src/events').filter(file => file.endsWith('.js'));
+client.once('ready', () => {
+    console.log('Ready!');
+    db.authenticate().then(() => {
+        console.log("Database is connected");
+        Config.init(db);
+        Config.sync();
+        Horaire.init(db);
+        Horaire.sync();
+        Class.init(db);
+        Class.sync();
+    }).catch(err => console.log(err));
+    try {
+        console.log('Started refreshing application (/) commands.');
+        for (const guild of client.guilds.cache.values()) {
+            guild.commands
+                .fetch()
+                .then(guildCommands => {
+                    if (guildCommands.size === 0) {
+                        return guild.commands.set(commands);
+                    } else {
+                        for (const command of commands) {
+                            if (!guildCommands.some(val => val.name === command.name)) {
+                                guild.commands.create(command).then(createdCommand => {
+                                    console.log(`Created ${createdCommand.name} for ${guild.id}`);
+                                });
+                            }
+                        }
 
-for (const file of events) {
-    const eventName = file.split(".")[0];
-    const event = require(`./src/events/${file}`);
-    console.time(`Loaded ${eventName} in`);
-    client.on(eventName, event.bind(null, client));
-    console.timeEnd(`Loaded ${eventName} in`);
-}
+                        return guildCommands;
+                    }
+                })
+                .catch(error => {
+                    console.log(`Error while fetching guild commands... ${guild.id}`);
+                    console.log(error);
+                });
+        }
 
-const commands = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
+        console.log('Successfully reloaded application (/) commands.');
+    } catch (error) {
+        console.error(error);
+    }
+});
 
-for (const file of commands) {
-    const commandName = file.split(".")[0];
-    const command = require(`./src/commands/${file}`);
-    console.time(`Loaded ${commandName} in`);
-    client.commands.set(commandName, command);
-    console.timeEnd(`Loaded ${commandName} in`);
-}
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (!client.commands.has(commandName)) return;
+
+    try {
+        await interaction.deferReply({ ephemeral: true });
+        await client.commands.get(commandName).execute(interaction);
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+    }
+});
 
 client.login(token);
