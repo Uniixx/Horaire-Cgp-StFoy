@@ -3,7 +3,7 @@ const { DataTypes, Model } = require('sequelize');
 module.exports = class config extends Model {
     static init(sequelize) {
         return super.init({
-            configId: {
+            id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true

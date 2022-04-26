@@ -20,22 +20,35 @@ module.exports = {
     async execute(interaction) {
         let pages = [];
         let date = moment();
+        let today = moment();
         let choosenDay = interaction.options.getInteger('day');
         let horaire = null;
         let classes = null;
 
+        if (choosenDay) date = moment().set('date', choosenDay);
+
+        if (date < today) {
+            date = moment().add(1, 'month');
+        }
+
+        choosenDay = choosenDay ? parseInt(choosenDay) : moment().format("D")
+
         horaire = await horaireHelper.findHoraire({
             guildId: interaction.guild.id,
-            day: choosenDay ? parseInt(choosenDay) : null
-        }, false);
+            day: choosenDay ? parseInt(choosenDay) : moment().format("D"),
+            month: date.month() + 1
+        });
+
+        console.log(horaire);
 
         if (horaire) {
-            classes = await classHelper.getAllClasses(horaire.horaireID);
+            if (date < today) {
+                date = moment().add(1, 'month');
+            }
+            classes = await classHelper.getAllClasses(horaire.id);
             pageHelper.createPages(classes)
             pages = pageHelper.pages;
         }
-
-        if (choosenDay) date = moment().set('date', choosenDay);
 
         const isWeekend = (date.isoWeekday() === 6 || date.isoWeekday() === 7);
 
@@ -45,12 +58,12 @@ module.exports = {
         }
 
         if (!horaire) {
-            interaction.editReply(errors.NotFoundHoraire.replace("%day%", choosenDay));
+            interaction.editReply(errors.NotFoundHoraire.replace("%day%", choosenDay).replace("%month%", date.format("MMMM")));
             return;
         }
 
         if (classes.length === 0) {
-            interaction.editReply(errors.NotFoundClasses.replace("%day%", choosenDay));
+            interaction.editReply(errors.NotFoundClasses.replace("%day%", choosenDay).replace("%month%", date.format("MMMM")));
             return;
         }
 

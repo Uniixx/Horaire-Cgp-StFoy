@@ -3,7 +3,7 @@ const { DataTypes, Model } = require('sequelize');
 module.exports = class config extends Model {
     static init(sequelize) {
         return super.init({
-            classID: {
+            id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true
@@ -18,7 +18,7 @@ module.exports = class config extends Model {
             endingTime: { type: DataTypes.TIME },
             suffix: { type: DataTypes.STRING }
         }, {
-            tableName: 'class',
+            tableName: 'dayclass',
             timestamps: false,
             sequelize
         });
