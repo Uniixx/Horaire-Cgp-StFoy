@@ -4,11 +4,12 @@ const moment = require('moment');
 moment.locale('en');
 
 class horaireHelper {
-    static async findHoraire(data, isToday) {
+    static async findHoraire(data) {
         return await Horaire.findOne({
             where: {
                 guildId: data.guildId,
-                day: isToday ? parseInt(moment().format("D")) : parseInt(data.day)
+                day: parseInt(data.day),
+                month: data.month
             }
         })
     }
