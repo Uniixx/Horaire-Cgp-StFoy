@@ -16,8 +16,6 @@ use App\Http\Controllers\MapController;
 */
 
 Route::get('/', [CalendarController::class, 'index']);;
-Route::get('/getData', [CalendarController::class, 'getData']);;
-Route::get('/map', [MapController::class, 'index']);;
 
 
 
