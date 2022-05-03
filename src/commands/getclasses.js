@@ -27,8 +27,11 @@ module.exports = {
 
         if (choosenDay) date = moment().set('date', choosenDay);
 
-        if (date < today) {
-            date = moment().add(1, 'month');
+        console.log(choosenDay);
+        console.log(today.format("D"));
+
+        if (date < today && choosenDay < today.format("D")) {
+            date = date.add(1, 'month');
         }
 
         choosenDay = choosenDay ? parseInt(choosenDay) : moment().format("D")
@@ -39,11 +42,9 @@ module.exports = {
             month: date.month() + 1
         });
 
-        console.log(horaire);
-
         if (horaire) {
             if (date < today) {
-                date = moment().add(1, 'month');
+                date = date.add(1, 'month');
             }
             classes = await classHelper.getAllClasses(horaire.id);
             pageHelper.createPages(classes)

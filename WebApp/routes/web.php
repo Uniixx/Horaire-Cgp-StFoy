@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\MapController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',                                             'AdminUsersController@index')->name('index');
+Route::get('/', [CalendarController::class, 'index']);;
+Route::get('/getData', [CalendarController::class, 'getData']);;
+Route::get('/map', [MapController::class, 'index']);;
+
 
 
 /* Auto-generated admin routes */

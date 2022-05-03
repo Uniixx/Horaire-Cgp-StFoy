@@ -16,7 +16,8 @@ module.exports = class config extends Model {
             room: { type: DataTypes.STRING },
             startingTime: { type: DataTypes.TIME },
             endingTime: { type: DataTypes.TIME },
-            suffix: { type: DataTypes.STRING }
+            suffix: { type: DataTypes.STRING },
+            note: { type: DataTypes.STRING }
         }, {
             tableName: 'dayclass',
             timestamps: false,

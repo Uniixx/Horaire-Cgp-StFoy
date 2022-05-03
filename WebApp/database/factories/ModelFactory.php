@@ -27,8 +27,7 @@ $factory->define(App\Models\Dayclass::class, static function (Faker\Generator $f
         'startingTime' => $faker->dateTime,
         'suffix' => $faker->sentence,
         'teacher' => $faker->sentence,
-        
-        
+        'note' => $faker->sentence,
     ];
 });
 /** @var  \Illuminate\Database\Eloquent\Factory $factory */

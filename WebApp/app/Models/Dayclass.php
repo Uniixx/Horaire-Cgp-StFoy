@@ -15,7 +15,8 @@ class Dayclass extends Model
         'room',
         'startingTime',
         'endingTime',
-        'suffix'
+        'suffix',
+        'note'
     ];
     
     

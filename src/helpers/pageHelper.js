@@ -14,6 +14,19 @@ class pageHelper {
             embed.addField("Starting", dateHelper.convertDateToUTC(classe.startingTime).format("h:mm"), true);
             embed.addField("Ending", dateHelper.convertDateToUTC(classe.endingTime).format("h:mm"), true);
             embed.addField("Suffix", classe.suffix, true);
+
+            if (classe.note) {
+                if (classe.note.includes(';')) {
+                    let noteArray = classe.note.split(';');
+
+                    for (let i = 0; i < noteArray.length; i++) {
+                        embed.addField(`Note ${i+1}`, noteArray[i], false);
+                    }
+                } else {
+                    embed.addField("Note", classe.note);
+                }
+            }
+
             embed.setFooter(`Classes for ${dateHelper.convertDateToUTC(classe.startingTime).format('dddd')} ${dateHelper.convertDateToUTC(classe.startingTime).format('Do')} ${dateHelper.convertDateToUTC(classe.startingTime).format('MMMM')}`);
             this.pages.push(embed);
         }
